@@ -75,6 +75,18 @@ Future Enhancements
 - Improved disease classification accuracy
 - Integration with real-time agricultural information
 
+  Screenshots
+
+Home Page
+
+"Home Page" (Screenshot 2026-09-20 220305.png)
+Disease Prediction
+"Disease Prediction" (Screenshot 2026-09-20 220402.png)
+Grad-CAM / XAI Explanation
+"Grad-CAM Explanation" (Screenshot 2026-09-20 220341.png)
+Treatment Recommendation
+"Treatment Recommendation" (Screenshot 2026-09-20 220420.png)
+
 Project Status
 
 Academic Major Project – In Development
