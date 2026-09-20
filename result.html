@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rice Disease Analysis</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    min-height: 100vh;
+    padding: 30px;
+    color: #263238;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.header {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    color: #2e7d32;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #607d8b;
+}
+
+.language {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #546e7a;
+}
+
+.image-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.image-card {
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+    text-align: center;
+}
+
+.image-card h2 {
+    color: #2e7d32;
+    margin-bottom: 15px;
+}
+
+.image-card img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.result-card {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+    margin-bottom: 25px;
+}
+
+.result-title {
+    text-align: center;
+    color: #1b5e20;
+    margin-bottom: 20px;
+}
+
+.disease-box {
+    background: #e8f5e9;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.disease-box h2 {
+    color: #1b5e20;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.confidence {
+    font-size: 20px;
+    font-weight: bold;
+    color: #388e3c;
+}
+
+.info-card {
+    margin-top: 18px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #fafafa;
+    border-left: 6px solid #4caf50;
+}
+
+.info-card h3 {
+    color: #2e7d32;
+    margin-bottom: 10px;
+}
+
+.info-card p {
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.xai-box {
+    background: #f3e5f5;
+    border-left: 6px solid #8e24aa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.xai-box h3 {
+    color: #6a1b9a;
+    margin-bottom: 10px;
+}
+
+.xai-box p {
+    line-height: 1.7;
+}
+
+.voice-section {
+    background: #e3f2fd;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 25px;
+}
+
+.voice-section h3 {
+    color: #1565c0;
+    margin-bottom: 15px;
+}
+
+button {
+    border: none;
+    padding: 13px 22px;
+    margin: 6px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.voice-btn {
+    background: #1976d2;
+    color: white;
+}
+
+.stop-btn {
+    background: #d32f2f;
+    color: white;
+}
+
+.back-btn {
+    background: #388e3c;
+    color: white;
+}
+
+.print-btn {
+    background: #455a64;
+    color: white;
+}
+
+.bottom-buttons {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.note {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #607d8b;
+}
+
+#audioPlayer {
+    width: 90%;
+    max-width: 500px;
+    margin-top: 15px;
+    display: none;
+}
+
+#voiceStatus {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+@media(max-width: 768px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .image-section {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media print {
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    button,
+    #audioPlayer,
+    #voiceStatus {
+        display: none !important;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <h1 id="pageTitle">
+        🌾 Rice Disease Analysis
+    </h1>
+
+    <p id="pageSubtitle">
+        Crop-Specific Treatment Recommendation System Using Explainable AI
+    </p>
+
+</div>
+
+
+<!-- LANGUAGE -->
+
+<div class="language">
+
+    <span id="languageLabel">
+        Selected Language:
+    </span>
+
+    <strong>{{ language }}</strong>
+
+</div>
+
+
+<!-- IMAGES -->
+
+<div class="image-section">
+
+    <div class="image-card">
+
+        <h2 id="uploadedTitle">
+            Uploaded Leaf
+        </h2>
+
+        {% if original_image %}
+
+        <img
+            src="{{ original_image }}"
+            alt="Uploaded Rice Leaf">
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="image-card">
+
+        <h2 id="gradcamTitle">
+            Grad-CAM XAI Explanation
+        </h2>
+
+        {% if gradcam_image %}
+
+        <img
+            src="{{ gradcam_image }}"
+            alt="Grad-CAM">
+
+        {% else %}
+
+        <p id="gradcamUnavailable">
+            Grad-CAM explanation could not be generated.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div class="result-card">
+
+    <h2
+        class="result-title"
+        id="predictionTitle">
+
+        Prediction Result
+
+    </h2>
+
+
+    <!-- DISEASE -->
+
+    <div class="disease-box">
+
+        <h2>
+            {{ disease_name }}
+        </h2>
+
+        <div class="confidence">
+
+            <span id="confidenceLabel">
+                Confidence:
+            </span>
+
+            {{ confidence }}%
+
+        </div>
+
+    </div>
+
+
+    <!-- REASON -->
+
+    <div class="info-card">
+
+        <h3 id="reasonTitle">
+            🔍 Reason Behind Prediction
+        </h3>
+
+        <p>
+            {{ reason }}
+        </p>
+
+    </div>
+
+
+    <!-- TREATMENT -->
+
+    <div class="info-card">
+
+        <h3 id="treatmentTitle">
+            💊 Recommended Treatment
+        </h3>
+
+        <p>
+            {{ treatment }}
+        </p>
+
+    </div>
+
+
+    <!-- PREVENTION -->
+
+    <div class="info-card">
+
+        <h3 id="preventionTitle">
+            🛡️ Prevention
+        </h3>
+
+        <p>
+            {{ prevention }}
+        </p>
+
+    </div>
+
+
+    <!-- XAI -->
+
+    <div class="xai-box">
+
+        <h3 id="xaiTitle">
+            🧠 Explainable AI (XAI)
+        </h3>
+
+        <p id="xaiText">
+
+            The Grad-CAM image highlights the important
+            regions of the rice leaf that contributed to
+            the disease prediction. Brighter regions indicate
+            areas that received more importance from the
+            deep learning model.
+
+        </p>
+
+    </div>
+
+
+    <!-- VOICE -->
+
+    <div class="voice-section">
+
+        <h3 id="voiceTitle">
+            🔊 Listen to the Result
+        </h3>
+
+
+        <button
+            class="voice-btn"
+            onclick="generateVoice()"
+            id="readButton">
+
+            🔊 Read Result Aloud
+
+        </button>
+
+
+        <button
+            class="stop-btn"
+            onclick="stopVoice()"
+            id="stopButton">
+
+            ⏹ Stop Voice
+
+        </button>
+
+
+        <p class="note">
+
+            <span id="voiceLanguageLabel">
+                Voice Language:
+            </span>
+
+            {{ language }}
+
+        </p>
+
+
+        <p id="voiceStatus"></p>
+
+
+        <audio
+            id="audioPlayer"
+            controls>
+        </audio>
+
+    </div>
+
+
+</div>
+
+
+<!-- BOTTOM BUTTONS -->
+
+<div class="bottom-buttons">
+
+    <button
+        class="back-btn"
+        onclick="window.location.href='/'"
+        id="backButton">
+
+        ← Analyze Another Image
+
+    </button>
+
+
+    <button
+        class="print-btn"
+        onclick="window.print()"
+        id="printButton">
+
+        🖨 Print Result
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+// ============================================================
+// SELECTED LANGUAGE
+// ============================================================
+
+const selectedLanguage = "{{ language }}";
+
+
+// ============================================================
+// TRANSLATE INTERFACE
+// ============================================================
+
+function changeInterfaceLanguage() {
+
+    if (selectedLanguage === "Telugu") {
+
+        document.documentElement.lang = "te";
+
+        document.getElementById("pageTitle").innerText =
+            "🌾 వరి పంట వ్యాధి విశ్లేషణ";
+
+        document.getElementById("pageSubtitle").innerText =
+            "వివరణాత్మక AI (XAI) ఆధారిత పంట-నిర్దిష్ట చికిత్స సిఫార్సు వ్యవస్థ";
+
+        document.getElementById("languageLabel").innerText =
+            "ఎంచుకున్న భాష:";
+
+        document.getElementById("uploadedTitle").innerText =
+            "అప్‌లోడ్ చేసిన ఆకు";
+
+        document.getElementById("gradcamTitle").innerText =
+            "Grad-CAM XAI వివరణ";
+
+        document.getElementById("predictionTitle").innerText =
+            "వ్యాధి అంచనా ఫలితం";
+
+        document.getElementById("confidenceLabel").innerText =
+            "నమ్మక స్థాయి:";
+
+        document.getElementById("reasonTitle").innerText =
+            "🔍 అంచనా వెనుక కారణం";
+
+        document.getElementById("treatmentTitle").innerText =
+            "💊 సిఫార్సు చేసిన చికిత్స";
+
+        document.getElementById("preventionTitle").innerText =
+            "🛡️ నివారణ చర్యలు";
+
+        document.getElementById("xaiTitle").innerText =
+            "🧠 వివరణాత్మక కృత్రిమ మేధస్సు (XAI)";
+
+        document.getElementById("xaiText").innerText =
+            "Grad-CAM చిత్రం వరి ఆకు యొక్క ముఖ్యమైన ప్రాంతాలను చూపిస్తుంది. వ్యాధి అంచనాకు ఈ ప్రాంతాలు మోడల్‌కు ముఖ్యమైనవి. ప్రకాశవంతమైన ప్రాంతాలు డీప్ లెర్నింగ్ మోడల్ ఎక్కువ ప్రాధాన్యత ఇచ్చిన ప్రాంతాలను సూచిస్తాయి.";
+
+        document.getElementById("voiceTitle").innerText =
+            "🔊 ఫలితాన్ని వినండి";
+
+        document.getElementById("readButton").innerText =
+            "🔊 ఫలితాన్ని చదవండి";
+
+        document.getElementById("stopButton").innerText =
+            "⏹ వాయిస్ ఆపండి";
+
+        document.getElementById("voiceLanguageLabel").innerText =
+            "వాయిస్ భాష:";
+
+        document.getElementById("backButton").innerText =
+            "← మరొక చిత్రాన్ని విశ్లేషించండి";
+
+        document.getElementById("printButton").innerText =
+            "🖨 ఫలితాన్ని ప్రింట్ చేయండి";
+
+    }
+
+
+    else if (selectedLanguage === "Hindi") {
+
+        document.documentElement.lang = "hi";
+
+        document.getElementById("pageTitle").innerText =
+            "🌾 धान रोग विश्लेषण";
+
+        document.getElementById("pageSubtitle").innerText =
+            "व्याख्यात्मक AI (XAI) आधारित फसल-विशिष्ट उपचार अनुशंसा प्रणाली";
+
+        document.getElementById("languageLabel").innerText =
+            "चयनित भाषा:";
+
+        document.getElementById("uploadedTitle").innerText =
+            "अपलोड की गई पत्ती";
+
+        document.getElementById("gradcamTitle").innerText =
+            "Grad-CAM XAI व्याख्या";
+
+        document.getElementById("predictionTitle").innerText =
+            "रोग पहचान परिणाम";
+
+        document.getElementById("confidenceLabel").innerText =
+            "विश्वास स्तर:";
+
+        document.getElementById("reasonTitle").innerText =
+            "🔍 पहचान के पीछे कारण";
+
+        document.getElementById("treatmentTitle").innerText =
+            "💊 अनुशंसित उपचार";
+
+        document.getElementById("preventionTitle").innerText =
+            "🛡️ रोकथाम";
+
+        document.getElementById("xaiTitle").innerText =
+            "🧠 व्याख्यात्मक कृत्रिम बुद्धिमत्ता (XAI)";
+
+        document.getElementById("xaiText").innerText =
+            "Grad-CAM छवि धान की पत्ती के उन महत्वपूर्ण क्षेत्रों को दिखाती है जिनका उपयोग मॉडल ने रोग की पहचान करने के लिए किया। अधिक चमकीले क्षेत्र उन स्थानों को दर्शाते हैं जिन्हें डीप लर्निंग मॉडल ने अधिक महत्व दिया।";
+
+        document.getElementById("voiceTitle").innerText =
+            "🔊 परिणाम सुनें";
+
+        document.getElementById("readButton").innerText =
+            "🔊 परिणाम पढ़ें";
+
+        document.getElementById("stopButton").innerText =
+            "⏹ आवाज बंद करें";
+
+        document.getElementById("voiceLanguageLabel").innerText =
+            "वॉयस भाषा:";
+
+        document.getElementById("backButton").innerText =
+            "← दूसरी तस्वीर का विश्लेषण करें";
+
+        document.getElementById("printButton").innerText =
+            "🖨 परिणाम प्रिंट करें";
+
+    }
+
+    else {
+
+        document.documentElement.lang = "en";
+
+    }
+
+}
+
+
+// Run translation
+changeInterfaceLanguage();
+
+
+// ============================================================
+// EDGE TTS VOICE
+// ============================================================
+
+async function generateVoice() {
+
+    const button =
+        document.getElementById("readButton");
+
+    const status =
+        document.getElementById("voiceStatus");
+
+    const audio =
+        document.getElementById("audioPlayer");
+
+
+    button.disabled = true;
+
+    button.innerText = "⏳ Generating Voice...";
+
+    status.innerText = "Generating voice, please wait...";
+
+
+    try {
+
+        const voiceText =
+    document.getElementById("voiceText").innerText;
+
+
+        const response =
+            await fetch("/generate_voice", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    text: voiceText,
+
+                    language: selectedLanguage
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Voice generation failed"
+            );
+
+        }
+
+
+        audio.src =
+            data.audio_url;
+
+
+        audio.style.display =
+            "inline-block";
+
+
+        status.innerText =
+            selectedLanguage === "Telugu"
+            ? "తెలుగు వాయిస్ సిద్ధంగా ఉంది."
+            : selectedLanguage === "Hindi"
+            ? "हिंदी आवाज तैयार है।"
+            : "Voice is ready.";
+
+
+        audio.play().catch(function() {
+
+            console.log(
+                "Automatic playback blocked. Click Play."
+            );
+
+        });
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        status.innerText =
+            "Voice generation failed. Please check the server.";
+
+        alert(
+            "Voice generation failed.\n\n" +
+            error.message
+        );
+
+    }
+
+
+    button.disabled = false;
+
+
+    if (selectedLanguage === "Telugu") {
+
+        button.innerText =
+            "🔊 ఫలితాన్ని చదవండి";
+
+    }
+
+    else if (selectedLanguage === "Hindi") {
+
+        button.innerText =
+            "🔊 परिणाम पढ़ें";
+
+    }
+
+    else {
+
+        button.innerText =
+            "🔊 Read Result Aloud";
+
+    }
+
+}
+
+
+// ============================================================
+// STOP VOICE
+// ============================================================
+
+function stopVoice() {
+
+    const audio =
+        document.getElementById("audioPlayer");
+
+    audio.pause();
+
+    audio.currentTime = 0;
+
+
+    const status =
+        document.getElementById("voiceStatus");
+
+    status.innerText =
+        selectedLanguage === "Telugu"
+        ? "వాయిస్ ఆపబడింది."
+        : selectedLanguage === "Hindi"
+        ? "आवाज बंद कर दी गई।"
+        : "Voice stopped.";
+
+}
+
+</script>
+
+</body>
+
+</html>

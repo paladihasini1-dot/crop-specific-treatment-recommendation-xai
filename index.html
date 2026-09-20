@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Treatment Recommendation System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #2e7d32;
+            margin-bottom: 12px;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .upload-box {
+            border: 2px dashed #66bb6a;
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 25px;
+            background: #f8fff8;
+        }
+
+        .upload-box label {
+            display: block;
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .language-section {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .language-section label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            background: #2e7d32;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #1b5e20;
+        }
+
+        .features {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .feature {
+            background: #f1f8e9;
+            padding: 15px 8px;
+            border-radius: 10px;
+            color: #33691e;
+            font-size: 14px;
+        }
+
+        .feature strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .note {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #777;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <div class="icon">🌾</div>
+
+        <h1>
+            Crop-Specific Treatment Recommendation
+        </h1>
+
+        <p class="subtitle">
+            Upload a rice leaf image to identify the disease
+            and receive an explainable treatment recommendation.
+        </p>
+
+
+        <form action="/predict"
+              method="POST"
+              enctype="multipart/form-data"
+              target="_blank">
+
+
+            <div class="upload-box">
+
+                <label for="leaf_image">
+                    Select Rice Leaf Image
+                </label>
+
+                <input
+                    type="file"
+                    id="leaf_image"
+                    name="leaf_image"
+                    accept="image/*"
+                    required
+                >
+
+            </div>
+
+
+            <div class="language-section">
+
+                <label for="language">
+                    Select Language
+                </label>
+
+                <select
+                    id="language"
+                    name="language"
+                    required
+                >
+
+                    <option value="English">
+                        English
+                    </option>
+
+                    <option value="Telugu">
+                        తెలుగు (Telugu)
+                    </option>
+
+                    <option value="Hindi">
+                        हिन्दी (Hindi)
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit">
+                🔍 Analyze Leaf
+            </button>
+
+        </form>
+
+
+        <div class="features">
+
+            <div class="feature">
+                <strong>🌱 Disease</strong>
+                Prediction
+            </div>
+
+            <div class="feature">
+                <strong>🔎 XAI</strong>
+                Explanation
+            </div>
+
+            <div class="feature">
+                <strong>💡 Treatment</strong>
+                Recommendation
+            </div>
+
+        </div>
+
+
+        <p class="note">
+            The system uses an AI image classification model
+            with Explainable AI to provide an interpretable
+            prediction. Recommendations should be verified
+            with local agricultural experts before application.
+        </p>
+
+    </div>
+
+</body>
+
+</html>
